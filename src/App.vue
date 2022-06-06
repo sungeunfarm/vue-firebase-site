@@ -5,7 +5,7 @@
         <SiteTitle :title="title"/>
         <v-spacer/>
       <v-btn icon to="/about">
-        <v-icon>mdi-magnify</v-icon>
+        <v-btn @click="save"><v-icon>mdi-check</v-icon></v-btn>
       </v-btn>
     </v-app-bar>
     <v-content>
@@ -31,7 +31,9 @@ export default {
       title: '나만의 사이트 만들기',
       footer: 'CodeEats Company.'
     }
+  },
+  mounted () {
+    console.log(this.$firebase)
   }
-  // components: { SiteTitle, FooterView, SiteMenu }
 }
 </script>
