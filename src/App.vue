@@ -2,9 +2,9 @@
   <v-app>
     <v-app-bar app color="primary" dark>
       <v-app-bar-nav-icon @click="drawer = !drawer"  />
-        <SiteTitle :title="site.title"/>
-        <v-spacer/>
-
+        <SiteTitle :title="$store.state.site.title"/>
+        <v-spacer />
+        <SiteSign />
         <!-- <v-btn @click="save"><v-icon>mdi-check</v-icon></v-btn>
         <v-btn @click="read" class="ml-3"><v-icon small >리드</v-icon></v-btn>
         <v-icon small @click="readOne" class="ml-3">mdi-check</v-icon> -->
@@ -12,55 +12,25 @@
     </v-app-bar>
     <v-content>
       <v-navigation-drawer app v-model="drawer" width="400">
-        <SiteMenu :items="site.menu" @update-item="update" @else-item="modi"/>
+        <SiteMenu :items="$store.state.site.menu" />
       </v-navigation-drawer>
       <router-view />
     </v-content>
-    <FooterView :footer="site.footer"/>
+    <FooterView :footer="$store.state.site.footer"/>
   </v-app>
 </template>
 
 <script>
 import SiteTitle from '@/views/site/ToolbarTitle'
 import FooterView from '@/views/site/FooterView'
-import SiteMenu from '@/views/site/SiteMenu.vue'
+import SiteMenu from '@/views/site/SiteMenu'
+import SiteSign from '@/views/site/SignView'
 export default {
   name: 'App',
-  components: { SiteTitle, FooterView, SiteMenu },
+  components: { SiteTitle, FooterView, SiteMenu, SiteSign },
   data () {
     return {
-      drawer: false,
-      site: {
-        menu: [
-          {
-            title: 'home',
-            icon: 'mdi-home',
-            subItems: [
-              {
-                title: 'Dashboard',
-                to: '/'
-              },
-              {
-                title: 'About',
-                to: '/about'
-              }
-            ]
-          },
-          {
-            title: 'about',
-            active: true,
-            icon: 'mdi-account',
-            subItems: [
-              {
-                title: 'xxx',
-                to: '/xxx'
-              }
-            ]
-          }
-        ],
-        title: '나만의 사이트 만들기',
-        footer: 'CodeEats Company.'
-      }
+      drawer: false
     }
   },
   created () {
@@ -75,22 +45,14 @@ export default {
       this.$firebase.database().ref().child('site').on('value', (sn) => {
         const v = sn.val()
         if (!v) {
-          this.$firebase.database().ref().child('site').set(this.site)
+          this.$firebase.database().ref().child('site').set(this.$store.state.site)
           return
         }
-        this.site = v
+        this.$store.state.site = v
+        console.log(this.site)
       }, (e) => {
         console.log(e.message)
       })
-    },
-    update (item) {
-      console.log(typeof (item))
-      this.site.menu.push(item)
-    },
-    modi (item) {
-      console.log(typeof (item))
-
-      this.site.menu[item[0]] = item[1]
     }
 
     // save () {

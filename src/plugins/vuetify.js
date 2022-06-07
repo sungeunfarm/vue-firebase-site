@@ -13,7 +13,7 @@ Vue.use(VuetifyToast, {
   x: 'right', // default
   y: 'bottom', // default
   color: 'info', // default
-  icon: 'mdi-plus',
+  icon: 'mdi-information',
   iconColor: '', // default
   classes: [
     'body-2'

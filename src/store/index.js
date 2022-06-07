@@ -3,28 +3,44 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
-// export default new Vuex.Store({
-//   state: {
-//   },
-//   getters: {
-//   },
-//   mutations: {
-//   },
-//   actions: {
-//   },
-//   modules: {
-//   }
-// })
-
-Vue.use(Vuex)
-
 export default new Vuex.Store({
   state: {
     editable: false,
     fireUser: null,
     user: null,
     boardTypeList: localStorage.getItem('boardTypeList') === 'true',
-    searchText: ''
+    searchText: '',
+    site: {
+      menu: [
+        {
+          title: 'home',
+          icon: 'mdi-home',
+          subItems: [
+            {
+              title: 'Dashboard',
+              to: '/'
+            },
+            {
+              title: 'About',
+              to: '/about'
+            }
+          ]
+        },
+        {
+          title: 'about',
+          active: true,
+          icon: 'mdi-account',
+          subItems: [
+            {
+              title: 'xxx',
+              to: '/xxx'
+            }
+          ]
+        }
+      ],
+      title: '나만의 사이트 만들기',
+      footer: 'CodeEats Company.'
+    }
   },
   mutations: {
     setEdit (state, edit) {

@@ -31,6 +31,8 @@
               {{ item.title }}
               <span v-if="$store.state.editable">
                 <v-btn icon @click="openDialogItem(i)"><v-icon>mdi-pencil</v-icon></v-btn>
+                <v-btn icon @click="moveItem(items,i,-1)" v-if="i>0"><v-icon>mdi-chevron-double-up</v-icon></v-btn>
+                <v-btn icon @click="moveItem(items,i,1)" v-if="i<items.length -1"><v-icon>mdi-chevron-double-down</v-icon></v-btn>
               </span>
             </v-list-item-title>
           </v-list-item-content>
@@ -46,6 +48,8 @@
               {{ subItem.title }}
               <span v-if="$store.state.editable">
                 <v-btn icon @click="openDialogSubItem(i, j)"><v-icon>mdi-pencil</v-icon></v-btn>
+                <v-btn icon @click="moveItem(item.subItems,j,-1)" v-if="j>0"><v-icon>mdi-chevron-double-up</v-icon></v-btn>
+                <v-btn icon @click="moveItem(item.subItems,j,1)" v-if="j<item.subItems.length -1"><v-icon>mdi-chevron-double-down</v-icon></v-btn>
               </span>
             </v-list-item-title>
           </v-list-item-content>
@@ -97,7 +101,7 @@
               ></v-text-field>
             </v-col>
           </v-row>
-          <v-text-field v-model="formItem.title" label="아이템 이름" outlined hide-details></v-text-field>
+          <v-text-field v-model="formItem.title" label="아이템 이름" outlined hide-details @keypress.enter="saveItem"></v-text-field>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -160,16 +164,43 @@ export default {
       }
       this.dialogItem = true
     },
-    saveItem () {
-      if (this.selectedItemIndex < 0) {
-        this.$emit('update-item', this.formItem)
-      } else {
-        const index = [this.selectedItemIndex]
-        this.$emit('else-item', [index, this.formItem])
+    async saveItem () {
+      if (this.selectedItemIndex < 0) this.$store.state.site.menu.push(this.formItem)
+      else {
+        this.$store.state.site.menu[this.selectedItemIndex].icon = this.formItem.icon
+        this.$store.state.site.menu[this.selectedItemIndex].title = this.formItem.title
       }
       this.save()
+    },
+    openDialogSubItem (index, subIndex) {
+      this.selectedItemIndex = index
+      this.selectedSubItemIndex = subIndex
+      if (subIndex < 0) {
+        this.formSubItem.title = ''
+        this.formSubItem.to = ''
+      } else {
+        this.formSubItem.title = this.items[index].subItems[subIndex].title
+        this.formSubItem.to = this.items[index].subItems[subIndex].to
+      }
+      this.dialogSubItem = true
+    },
+    async saveSubItem () {
+      if (this.selectedSubItemIndex < 0) {
+        if (!this.items[this.selectedItemIndex].subItems) this.$store.state.site.menu[this.selectedItemIndex].subItems = []
+        this.$store.state.site.menu[this.selectedItemIndex].subItems.push({ title: this.formSubItem.title, to: this.formSubItem.to })
+      } else {
+        this.$store.state.site.menu[this.selectedItemIndex].subItems[this.selectedSubItemIndex].title = this.formSubItem.title
+        this.$store.state.site.menu[this.selectedItemIndex].subItems[this.selectedSubItemIndex].to = this.formSubItem.to
+      }
+      this.save()
+    },
+    moveItem (items, i, arrow) {
+      // 주석부분과 아래 실행부분 같은코드
+      // const item = items.splice(i, 1)[0]
+      // items.splice(i + arrow, 0, item)
+      items.splice(i + arrow, 0, ...items.splice(i, 1))
+      this.save()
     }
-
   }
 }
 </script>
