@@ -1,7 +1,7 @@
 <template>
     <v-toolbar-title>
         {{this.title}}
-        <v-btn icon @click="openDialog"><v-icon>mdi-grease-pencil</v-icon></v-btn>
+        <v-btn icon @click="openDialog" class="ml-5" small><v-icon>mdi-grease-pencil</v-icon></v-btn>
         <v-dialog v-model="dialog" max-width="400">
           <v-card>
             <v-card-title>제목수정
@@ -31,9 +31,12 @@ export default {
     openDialog () {
       this.dialog = true
     },
-    save () {
-      this.$firebase.database().ref().child('site').update({ title: this.text })
-      this.dialog = false
+    async save () {
+      try {
+        await this.$firebase.database().ref().child('site').update({ title: this.text })
+      } finally {
+        this.dialog = false
+      }
     }
   }
 }
