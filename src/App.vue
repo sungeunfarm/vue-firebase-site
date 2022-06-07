@@ -84,10 +84,12 @@ export default {
       })
     },
     update (item) {
-      console.log('받았냐?')
+      console.log(typeof (item))
       this.site.menu.push(item)
     },
     modi (item) {
+      console.log(typeof (item))
+
       this.site.menu[item[0]] = item[1]
     }
 
